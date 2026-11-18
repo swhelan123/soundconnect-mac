@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key>
+    <string>dev.soundconnect.mac</string>
+    <key>CFBundleName</key>
+    <string>SoundConnect</string>
+    <key>CFBundleDisplayName</key>
+    <string>SoundConnect</string>
+    <key>CFBundleExecutable</key>
+    <string>SoundConnect</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>0.2.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>14.0</string>
+    <key>LSUIElement</key>
+    <true/>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>SoundConnect pauses Music and Spotify when you take your headphones off.</string>
+    <key>NSLocationUsageDescription</key>
+    <string>SoundConnect remembers roughly where your headphones were when they last disconnected, so you can find them.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>SoundConnect remembers roughly where your headphones were when they last disconnected, so you can find them.</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>SoundConnect talks to your Sony headphones over Bluetooth to read battery and change sound settings.</string>
+</dict>
+</plist>
