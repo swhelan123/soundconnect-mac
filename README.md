@@ -56,6 +56,18 @@
 
 Screenshots use sample data.
 
+## Install
+
+1. Download `SoundConnect-x.y.z.zip` from [Releases](../../releases/latest) and unzip it. It's a universal build for Apple Silicon and Intel, macOS 14 or later.
+2. Move **SoundConnect.app** to **Applications** and open it.
+3. The app isn't notarized by Apple, so the first launch is blocked. Open **System Settings → Privacy & Security** and click **Open Anyway** next to SoundConnect. (Or run `xattr -dr com.apple.quarantine /Applications/SoundConnect.app` in Terminal.)
+4. Allow **Bluetooth** when asked. Connect your headphones in Bluetooth settings as usual, and SoundConnect picks them up automatically.
+
+Optional permissions:
+- **Notifications**: low-battery and break reminders.
+- **Location**: last-seen place.
+- **Automation**: pausing Music and Spotify.
+
 ## Compatibility
 
 Developed and tested on a **WH-1000XM6** (firmware 3.1.5) running macOS 27. Connections work over either of Sony's two control protocols: v2 (XM5/XM6 era) and v1 (XM3/XM4 era). Every control appears only if the connected headphones report that they support it, so other models should work with the features they have. The protocol library documents support for WH-1000XM3/XM5/XM6, WF-1000XM5/XM6, WH-CH720N, WF-C510, WF-C700N, WF-L910, WF-LC900 and WF-LS900N.
@@ -89,7 +101,9 @@ Requirements: Xcode 15+, CMake 3.31+, Ninja (`brew install cmake ninja`).
 ```sh
 git clone --recursive <this repo>
 cd soundconnect
-scripts/build.sh --run     # builds libmdr, the app, assembles build/SoundConnect.app and launches it
+scripts/build.sh --run       # builds libmdr + the app into build/SoundConnect.app and launches it
+scripts/build.sh --install   # same, then installs to /Applications and launches it from there
+scripts/release.sh           # universal, ad-hoc signed dist/SoundConnect-<version>.zip for GitHub releases
 ```
 
 Notes:
