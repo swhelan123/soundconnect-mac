@@ -1,8 +1,9 @@
 // swift-tools-version: 6.0
 import PackageDescription
 
-// Static libraries produced by `scripts/build.sh` (CMake build of the SonyHeadphonesClient submodule).
-let mdrBuild = Context.packageDirectory + "/build/mdr"
+// Static libraries produced by `scripts/build.sh` / `scripts/release.sh` (CMake build of the
+// SonyHeadphonesClient submodule). MDR_BUILD_DIR selects e.g. the universal release build.
+let mdrBuild = Context.environment["MDR_BUILD_DIR"] ?? (Context.packageDirectory + "/build/mdr")
 
 let package = Package(
     name: "SoundConnect",

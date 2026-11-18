@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Build libmdr (from the SonyHeadphonesClient submodule) + the SwiftUI app, and assemble SoundConnect.app.
 #   scripts/build.sh            # release build -> build/SoundConnect.app
-#   scripts/build.sh --run      # ...and launch it
+#   scripts/build.sh --run      # ...and launch it from build/
+#   scripts/build.sh --install  # ...copy to /Applications and launch it from there
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -34,11 +35,24 @@ codesign --force --sign "${IDENTITY:--}" "$APP"
 echo "    signed with ${IDENTITY:-ad-hoc}"
 echo "==> $APP"
 
-if [ "${1:-}" = "--run" ]; then
+quit_running() {
   # Quit politely so the app releases its Bluetooth channel before the new build opens it.
   osascript -e 'tell application id "dev.soundconnect.mac" to quit' 2>/dev/null || true
   for _ in 1 2 3 4 5 6 7 8 9 10; do pgrep -x SoundConnect >/dev/null || break; sleep 0.3; done
   pkill -x SoundConnect 2>/dev/null || true
   sleep 1
-  open "$APP"
-fi
+}
+
+case "${1:-}" in
+  --run)
+    quit_running
+    open "$APP"
+    ;;
+  --install)
+    quit_running
+    rm -rf /Applications/SoundConnect.app
+    ditto "$APP" /Applications/SoundConnect.app
+    echo "==> installed /Applications/SoundConnect.app"
+    open /Applications/SoundConnect.app
+    ;;
+esac
