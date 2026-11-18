@@ -1,0 +1,7 @@
+module CMDR {
+    header "CMDR.h"
+    link "c++"
+    link framework "IOBluetooth"
+    link framework "Foundation"
+    export *
+}
