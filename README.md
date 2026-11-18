@@ -58,8 +58,8 @@ Screenshots use sample data.
 
 ## Install
 
-1. Download `SoundConnect-x.y.z.zip` from [Releases](../../releases/latest) and unzip it. It's a universal build for Apple Silicon and Intel, macOS 14 or later.
-2. Move **SoundConnect.app** to **Applications** and open it.
+1. Download **`SoundConnect-x.y.z.dmg`** from [Releases](../../releases/latest). It's a universal build for Apple Silicon and Intel, macOS 14 or later.
+2. Open it and drag **SoundConnect** onto **Applications**. A `.zip` is also attached if you prefer that.
 3. The app isn't notarized by Apple, so the first launch is blocked. Open **System Settings → Privacy & Security** and click **Open Anyway** next to SoundConnect. (Or run `xattr -dr com.apple.quarantine /Applications/SoundConnect.app` in Terminal.)
 4. Allow **Bluetooth** when asked. Connect your headphones in Bluetooth settings as usual, and SoundConnect picks them up automatically.
 
@@ -103,7 +103,7 @@ git clone --recursive <this repo>
 cd soundconnect
 scripts/build.sh --run       # builds libmdr + the app into build/SoundConnect.app and launches it
 scripts/build.sh --install   # same, then installs to /Applications and launches it from there
-scripts/release.sh           # universal, ad-hoc signed dist/SoundConnect-<version>.zip for GitHub releases
+scripts/release.sh           # universal, ad-hoc signed dist/SoundConnect-<version>.dmg + .zip for GitHub releases
 ```
 
 Notes:

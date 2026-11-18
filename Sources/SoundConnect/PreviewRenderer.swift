@@ -8,6 +8,11 @@ import SwiftUI
 enum PreviewRenderer {
     static func runIfRequested() {
         let args = CommandLine.arguments
+        if let i = args.firstIndex(of: "--render-dmg-background"), i + 1 < args.count {
+            _ = NSApplication.shared
+            renderDMGBackground(to: URL(fileURLWithPath: args[i + 1]))
+            exit(0)
+        }
         if let i = args.firstIndex(of: "--render-icon"), i + 1 < args.count {
             _ = NSApplication.shared
             renderIcon(to: URL(fileURLWithPath: args[i + 1]))
@@ -125,6 +130,19 @@ enum PreviewRenderer {
         try? rep.representation(using: .png, properties: [:])?.write(to: url)
     }
 
+    /// DMG window background (660x400 pt) at 1x and 2x. Icon centres are at (165,190) and (495,190);
+    /// keep in sync with scripts/dmg-settings.py.
+    static func renderDMGBackground(to dir: URL) {
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        for (scale, name) in [(1.0, "background.png"), (2.0, "background@2x.png")] {
+            let renderer = ImageRenderer(content: DMGBackground().frame(width: 660, height: 400))
+            renderer.scale = scale
+            guard let cg = renderer.cgImage else { continue }
+            try? NSBitmapImageRep(cgImage: cg).representation(using: .png, properties: [:])?
+                .write(to: dir.appendingPathComponent(name))
+        }
+    }
+
     static func renderIcon(to dir: URL) {
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         for base in [16, 32, 128, 256, 512] {
@@ -155,4 +173,44 @@ private struct VisualEffect: NSViewRepresentable {
         return v
     }
     func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
+}
+
+/// Install-window artwork for the DMG.
+private struct DMGBackground: View {
+    var body: some View {
+        ZStack {
+            LinearGradient(colors: [Color(red: 0.97, green: 0.97, blue: 1.0), Color(red: 0.89, green: 0.90, blue: 0.98)],
+                           startPoint: .top, endPoint: .bottom)
+            RadialGradient(colors: [Color(red: 0.36, green: 0.42, blue: 0.98).opacity(0.10), .clear],
+                           center: UnitPoint(x: 0.5, y: 0.45), startRadius: 0, endRadius: 320)
+            VStack(spacing: 4) {
+                Text("SoundConnect")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color(red: 0.16, green: 0.17, blue: 0.40))
+                Text("Drag the app to Applications to install")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Color(red: 0.35, green: 0.37, blue: 0.55))
+            }
+            .position(x: 330, y: 56)
+            // Arrow from the app icon to the Applications folder.
+            Canvas { ctx, _ in
+                var line = Path()
+                line.move(to: CGPoint(x: 252, y: 190))
+                line.addLine(to: CGPoint(x: 400, y: 190))
+                ctx.stroke(line, with: .color(Color(red: 0.36, green: 0.42, blue: 0.98).opacity(0.75)),
+                           style: StrokeStyle(lineWidth: 5, lineCap: .round, dash: [0.1, 13]))
+                var head = Path()
+                head.move(to: CGPoint(x: 398, y: 176))
+                head.addLine(to: CGPoint(x: 414, y: 190))
+                head.addLine(to: CGPoint(x: 398, y: 204))
+                ctx.stroke(head, with: .color(Color(red: 0.36, green: 0.42, blue: 0.98).opacity(0.85)),
+                           style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+            }
+            Text("First launch: System Settings → Privacy & Security → Open Anyway")
+                .font(.system(size: 11))
+                .foregroundStyle(Color(red: 0.40, green: 0.42, blue: 0.58))
+                .position(x: 330, y: 362)
+        }
+        .frame(width: 660, height: 400)
+    }
 }

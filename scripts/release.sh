@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build a distributable SoundConnect.app: universal (arm64 + x86_64), ad-hoc signed, zipped.
-#   scripts/release.sh            -> dist/SoundConnect-<version>.zip (+ .sha256)
+#   scripts/release.sh            -> dist/SoundConnect-<version>.dmg and .zip (+ .sha256)
 #
 # Ad-hoc on purpose: a personal "Apple Development" certificate embeds its owner's name/email in
 # the signature and isn't valid for distribution anyway. Without a Developer ID + notarization,
@@ -40,5 +40,15 @@ codesign -dv "$APP" 2>&1 | grep -E 'Signature|Identifier'
 
 ZIP="dist/SoundConnect-$VERSION.zip"
 ditto -c -k --keepParent "$APP" "$ZIP"
-shasum -a 256 "$ZIP" | tee "$ZIP.sha256"
+
+echo "==> DMG"
+# dmgbuild writes the Finder layout (.DS_Store) directly, so no Finder scripting is needed.
+# Installed into a throwaway venv to keep the system Python clean.
+VENV="build/dmgbuild-venv"
+[ -x "$VENV/bin/dmgbuild" ] || { python3 -m venv "$VENV" && "$VENV/bin/pip" install -q dmgbuild; }
+DMG="dist/SoundConnect-$VERSION.dmg"
+"$VENV/bin/dmgbuild" -s scripts/dmg-settings.py -D app="$APP" "SoundConnect" "$DMG" >/dev/null
+
+(cd dist && shasum -a 256 "$(basename "$DMG")" "$(basename "$ZIP")" | tee SHA256SUMS.txt)
+echo "==> $DMG"
 echo "==> $ZIP"
