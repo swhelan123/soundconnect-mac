@@ -170,7 +170,7 @@ final class MDREngine: @unchecked Sendable {
             }
             setPhase(.initializing)
         case kInProgress, kTimeout:
-            if Date() > connectDeadline { fail("Timed out connecting to headphones") }
+            if Date() > connectDeadline { fail("The headphones didn't accept the control connection. Another app may be using it, e.g. a browser tab with a web headphone controller, or another headphone app on this Mac. Close it and SoundConnect reconnects automatically.") }
         default:
             fail(connectionError(r))
         }

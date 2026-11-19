@@ -129,6 +129,7 @@ These were found while building this app and may help others:
 - The XM6 exposes the control service `956C7B26-D49A-4BA8-B03F-B17D393CB6E2` (MDR v2) on RFCOMM channel 9.
 - **No Clear Bass on the XM6.** It moved to a 10-band EQ (31 Hz–16 kHz, ±6) with no Clear Bass slot. Band edits are only accepted on the Custom and user presets, not on Off or the built-in presets.
 - **Sound pressure is only measured with Safe Listening mode on.** Otherwise the reply to `SAFE_LISTENING_GET_EXTENDED_PARAM` (cmd `0x5B`) carries level 0 and error cause `0x03`, which the library doesn't currently decode.
+- **One client at a time.** The control channel accepts only one client per host. If a browser tab using Web Serial (for example, a web-based headphone controller) or another app holds it, every other open fails instantly (`OI_RFCOMM_Connect` status 911). SoundConnect keeps retrying and connects once the other client lets go.
 - **Auto-pause goes to the playback device.** The headphones' auto-pause and resume go over AVRCP to whichever multipoint device is currently the playback device, so with a phone as the source the Mac isn't paused.
 
 ## Credits
